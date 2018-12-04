@@ -10,4 +10,4 @@ Integrates XWiki with Slack.
 * License: LGPL 2.1
 * Translations: N/A
 * Sonar Dashboard: N/A
-* Continuous Integration Status: [![Build Status](http://ci.xwikisas.com/view/All/job/xwikisas/job/application-forum/job/master/badge/icon)](http://ci.xwikisas.com/view/All/job/xwikisas/job/application-forum/job/master/)
+* Continuous Integration Status: [![Build Status](http://ci.xwikisas.com/view/All/job/xwikisas/job/application-slack/job/master/badge/icon)](http://ci.xwikisas.com/view/All/job/xwikisas/job/application-slack/job/master/)
