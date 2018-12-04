@@ -1,0 +1,3 @@
+com.xwiki.slack.internal.DocumentListener
+com.xwiki.slack.SlackClient
+com.xwiki.slack.SlackConfiguration
