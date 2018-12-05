@@ -37,11 +37,19 @@
     <xwiki.extension.category>application</xwiki.extension.category>
     <!-- Don't run CLIRR here since there's no Java code. -->
     <xwiki.clirr.skip>true</xwiki.clirr.skip>
+    <xwiki.extension.licensing.publicDocuments>
+      Slack.WebHome
+    </xwiki.extension.licensing.publicDocuments>
     <xwiki.extension.licensing.excludedDocuments>
       Slack.Code.SlackConfiguration
     </xwiki.extension.licensing.excludedDocuments>
   </properties>
   <dependencies>
+  	<dependency>
+      <groupId>com.xwiki.licensing</groupId>
+      <artifactId>application-licensing-licensor-api</artifactId>
+      <version>${licensing.version}</version>
+    </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>application-slack-api</artifactId>

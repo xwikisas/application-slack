@@ -43,8 +43,8 @@
 
 {{velocity}}
 ## This code is used only to display the missing error message.
-#set ($mainPageReference = $services.model.createDocumentReference('', ['Slack', 'Code'], 'SlackConfiguration'))
-#if (!$services.licensing.licensor.hasLicensureForEntity($mainReference))
+#set ($mainPageReference = $services.model.createDocumentReference('', ['Slack', 'Code'], 'SlackConfigurationClass'))
+#if (!$services.licensing.licensor.hasLicensureForEntity($mainPageReference))
   {{error}}#getMissingLicenseMessage('slack.extension.name'){{/error}}
 #end
 {{/velocity}}
@@ -287,8 +287,8 @@
       <codeToExecute>{{include reference="Slack.Code.SlackConfiguration"/}}
 
 ## This code is used only to clear the configuration form when the license is missing.
-#set ($mainPageReference = $services.model.createDocumentReference('', ['Slack', 'Code'], 'SlackConfiguration'))
-#if (!$services.licensing.licensor.hasLicensureForEntity($mainReference))
+#set ($mainPageReference = $services.model.createDocumentReference('', ['Slack', 'Code'], 'SlackConfigurationClass'))
+#if (!$services.licensing.licensor.hasLicensureForEntity($mainPageReference))
   #set ($discard = $app.set('configurationClass', ''))
 #end</codeToExecute>
     </property>
