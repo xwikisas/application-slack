@@ -47,6 +47,11 @@
 #if (!$services.licensing.licensor.hasLicensureForEntity($mainPageReference))
   {{error}}#getMissingLicenseMessage('slack.extension.name'){{/error}}
 #end
+
+#if ($doc.fullName == 'Slack.Code.SlackConfiguration')
+  ## Just redirect to the administration UI.
+  $response.sendRedirect($xwiki.getURL('XWiki.XWikiPreferences', 'admin', 'editor=globaladmin&amp;section=slack'))
+#end
 {{/velocity}}
 </content>
   <object>
