@@ -41,6 +41,7 @@ import org.xwiki.rendering.syntax.Syntax;
 import com.xpn.xwiki.XWikiContext;
 import com.xpn.xwiki.XWikiException;
 import com.xpn.xwiki.doc.XWikiDocument;
+import com.xwiki.licensing.Licensor;
 import com.xwiki.slack.SlackClient;
 import com.xwiki.slack.SlackConfiguration;
 
@@ -64,6 +65,9 @@ public class DocumentListener extends AbstractEventListener
     private static final String FORMAT_LINK = "<%s|%s>";
 
     @Inject
+    private Licensor licensor;
+
+    @Inject
     private Logger logger;
 
     @Inject
@@ -83,6 +87,19 @@ public class DocumentListener extends AbstractEventListener
     @Override
     public void onEvent(Event event, Object source, Object data)
     {
+        XWikiDocument doc = (XWikiDocument) source;
+        XWikiContext context = (XWikiContext) data;
+
+        // Skip if there is no valid license has expired.
+        DocumentReference mainPageReference =
+            new DocumentReference(context.getMainXWiki(), Arrays.asList("Slack", "Code"), "SlackConfigurationClass");
+        if (!licensor.hasLicensure(mainPageReference)) {
+            logger.warn("Skipping notification sending for event [{}] by user [{}] on document [{}]. "
+                + "No valid Slack license has been found. Please visit the 'Licenses' section in Administration.",
+                event.getClass().getName(), context.getUserReference(), doc.getDocumentReference());
+            return;
+        }
+
         if (source instanceof XWikiDocument && data instanceof XWikiContext) {
             try {
                 if (this.configuration.isEnabled()) {
