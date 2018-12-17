@@ -68,20 +68,20 @@
       <defaultWeb/>
       <nameField/>
       <validationScript/>
-      <enable>
+      <enabled>
         <customDisplay/>
         <defaultValue>1</defaultValue>
         <disabled>0</disabled>
         <displayFormType>select</displayFormType>
         <displayType/>
-        <name>enable</name>
+        <name>enabled</name>
         <number>4</number>
-        <prettyName>Enable</prettyName>
+        <prettyName>Enabled</prettyName>
         <unmodifiable>0</unmodifiable>
         <validationMessage/>
         <validationRegExp/>
         <classType>com.xpn.xwiki.objects.classes.BooleanClass</classType>
-      </enable>
+      </enabled>
       <webhookUrl>
         <customDisplay/>
         <disabled>0</disabled>
@@ -97,7 +97,7 @@
       </webhookUrl>
     </class>
     <property>
-      <enable>1</enable>
+      <enabled>1</enabled>
     </property>
     <property>
       <webhookUrl/>

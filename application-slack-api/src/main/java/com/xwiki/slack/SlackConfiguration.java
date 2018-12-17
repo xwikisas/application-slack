@@ -19,20 +19,13 @@
  */
 package com.xwiki.slack;
 
-import java.util.Arrays;
 import javax.inject.Inject;
-import javax.inject.Provider;
+import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.xwiki.component.annotation.Component;
-import org.xwiki.model.reference.DocumentReference;
-import org.xwiki.model.reference.SpaceReference;
-
-import com.xpn.xwiki.XWikiContext;
+import org.xwiki.configuration.ConfigurationSource;
 import com.xpn.xwiki.XWikiException;
-import com.xpn.xwiki.doc.XWikiDocument;
-import com.xpn.xwiki.objects.BaseObject;
-import com.xpn.xwiki.objects.BaseProperty;
 
 /**
  * The component used to access the Slack configuration.
@@ -44,20 +37,8 @@ import com.xpn.xwiki.objects.BaseProperty;
 public class SlackConfiguration
 {
     @Inject
-    private Provider<XWikiContext> xcontextProvider;
-
-    private Object getPropertyValue(String propertyName) throws XWikiException
-    {
-        XWikiContext context = xcontextProvider.get();
-        SpaceReference spaceReference = new SpaceReference("xwiki", Arrays.asList("Slack", "Code"));
-
-        DocumentReference configReference = new DocumentReference("SlackConfiguration", spaceReference);
-        XWikiDocument configDoc = context.getWiki().getDocument(configReference, context);
-        DocumentReference configClassReference = new DocumentReference("SlackConfigurationClass", spaceReference);
-        BaseObject slackObj = configDoc.getXObject(configClassReference);
-        BaseProperty<?> slackProperty = (BaseProperty<?>) slackObj.get(propertyName);
-        return slackProperty.getValue();
-    }
+    @Named("slack")
+    private ConfigurationSource configuration;
 
     /**
      * Check if Slack is enabled in XWiki.
@@ -65,9 +46,9 @@ public class SlackConfiguration
      * @return true if Slack is enabled, false otherwise
      * @throws XWikiException whenever an exception occurs
      */
-    public boolean isEnabled() throws XWikiException
+    public boolean isEnabled()
     {
-        return getPropertyValue("enable").equals(1);
+        return configuration.getProperty("enabled", 1) == 1;
     }
 
     /**
@@ -76,8 +57,8 @@ public class SlackConfiguration
      * @return the Webhook URL of the Slack channel
      * @throws XWikiException whenever an exception occurs
      */
-    public String getWebhookUrl() throws XWikiException
+    public String getWebhookUrl()
     {
-        return getPropertyValue("webhookUrl").toString();
+        return configuration.getProperty("webhookUrl");
     }
 }

@@ -94,30 +94,36 @@ public class DocumentListener extends AbstractEventListener
         DocumentReference mainPageReference =
             new DocumentReference(context.getMainXWiki(), Arrays.asList("Slack", "Code"), "SlackConfigurationClass");
         if (!licensor.hasLicensure(mainPageReference)) {
-            logger.warn("Skipping notification sending for event [{}] by user [{}] on document [{}]. "
-                + "No valid Slack license has been found. Please visit the 'Licenses' section in Administration.",
+            logger.warn(
+                "Skipping notification sending for event [{}] by user [{}] on document [{}]. "
+                    + "No valid Slack license has been found. Please visit the 'Licenses' section in Administration.",
                 event.getClass().getName(), context.getUserReference(), doc.getDocumentReference());
             return;
         }
 
+        // Skip if Slack is disabled.
+        if (!configuration.isEnabled()) {
+            if (logger.isDebugEnabled()) {
+                logger.debug(
+                    "Skipping notification sending for event [{}] by user [{}] on document [{}]. Slack is disabled.",
+                    event.getClass().getName(), context.getUserReference(), doc.getDocumentReference());
+            }
+            return;
+        }
+
         if (source instanceof XWikiDocument && data instanceof XWikiContext) {
-            try {
-                if (this.configuration.isEnabled()) {
-                    XWikiDocument document = (XWikiDocument) source;
-                    XWikiContext xcontext = (XWikiContext) data;
-                    String message =
-                        String.format("%s was %s by %s%s", getNotificationDocument(event, document, xcontext),
-                            getNotificationAction(event), getNotificationAuthor(event, document, xcontext),
-                            this.slack.encode(getNotificationComment(document)));
-                    String webhookURL = this.configuration.getWebhookUrl();
-                    try {
-                        this.slack.postMessage(message, webhookURL);
-                    } catch (IOException e) {
-                        this.logger.warn("Faild to post message to Slack.", e);
-                    }
+            if (this.configuration.isEnabled()) {
+                XWikiDocument document = (XWikiDocument) source;
+                XWikiContext xcontext = (XWikiContext) data;
+                String message = String.format("%s was %s by %s%s", getNotificationDocument(event, document, xcontext),
+                    getNotificationAction(event), getNotificationAuthor(event, document, xcontext),
+                    this.slack.encode(getNotificationComment(document)));
+                String webhookURL = this.configuration.getWebhookUrl();
+                try {
+                    this.slack.postMessage(message, webhookURL);
+                } catch (IOException e) {
+                    this.logger.warn("Faild to post message to Slack.", e);
                 }
-            } catch (XWikiException e) {
-                this.logger.warn("Faild to read Slack configuration", e);
             }
         }
     }
