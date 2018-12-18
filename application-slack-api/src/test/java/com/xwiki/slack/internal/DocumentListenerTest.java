@@ -107,7 +107,7 @@ public class DocumentListenerTest
         listener.onEvent(event, doc, context);
 
         verify(logger, times(1)).debug(
-            "Skipping notification sending for event [{}] by user [{}] on document [{}]. Slack is disabled.",
+            "Skipping notification sending for event [{}] by user [{}] on document [{}]. Slack disabled.",
             event.getClass().getName(), userReference, docReference);
 
         verify(doc, times(1)).getDocumentReference();

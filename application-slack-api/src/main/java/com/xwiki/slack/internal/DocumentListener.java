@@ -87,34 +87,30 @@ public class DocumentListener extends AbstractEventListener
     @Override
     public void onEvent(Event event, Object source, Object data)
     {
-        XWikiDocument doc = (XWikiDocument) source;
-        XWikiContext context = (XWikiContext) data;
-
-        // Skip if there is no valid license has expired.
-        DocumentReference mainPageReference =
-            new DocumentReference(context.getMainXWiki(), Arrays.asList("Slack", "Code"), "SlackConfigurationClass");
-        if (!licensor.hasLicensure(mainPageReference)) {
-            logger.warn(
-                "Skipping notification sending for event [{}] by user [{}] on document [{}]. "
-                    + "No valid Slack license has been found. Please visit the 'Licenses' section in Administration.",
-                event.getClass().getName(), context.getUserReference(), doc.getDocumentReference());
-            return;
-        }
-
-        // Skip if Slack is disabled.
-        if (!configuration.isEnabled()) {
-            if (logger.isDebugEnabled()) {
-                logger.debug(
-                    "Skipping notification sending for event [{}] by user [{}] on document [{}]. Slack is disabled.",
-                    event.getClass().getName(), context.getUserReference(), doc.getDocumentReference());
-            }
-            return;
-        }
-
         if (source instanceof XWikiDocument && data instanceof XWikiContext) {
+            XWikiDocument document = (XWikiDocument) source;
+            XWikiContext xcontext = (XWikiContext) data;
+
+            // Skip if there is no valid license has expired.
+            DocumentReference mainPageReference = new DocumentReference(xcontext.getMainXWiki(),
+                Arrays.asList("Slack", "Code"), "SlackConfigurationClass");
+            if (!licensor.hasLicensure(mainPageReference)) {
+                logger.warn("Skipping notification sending for event [{}] by user [{}] on document [{}]. "
+                    + "No valid Slack license has been found. Please visit the 'Licenses' section in Administration.",
+                    event.getClass().getName(), xcontext.getUserReference(), document.getDocumentReference());
+                return;
+            }
+
+            // Skip if Slack is disabled.
+            if (!configuration.isEnabled()) {
+                if (logger.isDebugEnabled()) {
+                    logger.debug(
+                        "Skipping notification sending for event [{}] by user [{}] on document [{}]. Slack disabled.",
+                        event.getClass().getName(), xcontext.getUserReference(), document.getDocumentReference());
+                }
+                return;
+            }
             if (this.configuration.isEnabled()) {
-                XWikiDocument document = (XWikiDocument) source;
-                XWikiContext xcontext = (XWikiContext) data;
                 String message = String.format("%s was %s by %s%s", getNotificationDocument(event, document, xcontext),
                     getNotificationAction(event), getNotificationAuthor(event, document, xcontext),
                     this.slack.encode(getNotificationComment(document)));
