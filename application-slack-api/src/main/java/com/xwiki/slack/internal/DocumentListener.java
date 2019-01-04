@@ -114,7 +114,6 @@ public class DocumentListener extends AbstractEventListener
                         logger.warn("Faild to post message to Slack.", e);
                     }
                 }
-
             } else {
                 if (logger.isDebugEnabled()) {
                     logger.debug(
