@@ -55,6 +55,48 @@
     <defaultWeb/>
     <nameField/>
     <validationScript/>
+    <documentCreated>
+      <customDisplay/>
+      <defaultValue>1</defaultValue>
+      <disabled>0</disabled>
+      <displayFormType>checkbox</displayFormType>
+      <displayType/>
+      <name>documentCreated</name>
+      <number>9</number>
+      <prettyName>Document created events</prettyName>
+      <unmodifiable>0</unmodifiable>
+      <validationMessage/>
+      <validationRegExp/>
+      <classType>com.xpn.xwiki.objects.classes.BooleanClass</classType>
+    </documentCreated>
+    <documentDeleted>
+      <customDisplay/>
+      <defaultValue>1</defaultValue>
+      <disabled>0</disabled>
+      <displayFormType>checkbox</displayFormType>
+      <displayType/>
+      <name>documentDeleted</name>
+      <number>10</number>
+      <prettyName>Document deleted events</prettyName>
+      <unmodifiable>0</unmodifiable>
+      <validationMessage/>
+      <validationRegExp/>
+      <classType>com.xpn.xwiki.objects.classes.BooleanClass</classType>
+    </documentDeleted>
+    <documentUpdated>
+      <customDisplay/>
+      <defaultValue>1</defaultValue>
+      <disabled>0</disabled>
+      <displayFormType>checkbox</displayFormType>
+      <displayType/>
+      <name>documentUpdated</name>
+      <number>11</number>
+      <prettyName>Document updated events</prettyName>
+      <unmodifiable>0</unmodifiable>
+      <validationMessage/>
+      <validationRegExp/>
+      <classType>com.xpn.xwiki.objects.classes.BooleanClass</classType>
+    </documentUpdated>
     <enabled>
       <customDisplay/>
       <defaultValue>1</defaultValue>
@@ -62,7 +104,7 @@
       <displayFormType>select</displayFormType>
       <displayType/>
       <name>enabled</name>
-      <number>4</number>
+      <number>2</number>
       <prettyName>Enabled</prettyName>
       <unmodifiable>0</unmodifiable>
       <validationMessage/>
@@ -73,7 +115,7 @@
       <customDisplay/>
       <disabled>0</disabled>
       <name>webhookUrl</name>
-      <number>2</number>
+      <number>1</number>
       <picker>0</picker>
       <prettyName>Webhook URL</prettyName>
       <size>30</size>

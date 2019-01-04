@@ -101,24 +101,25 @@ public class DocumentListener extends AbstractEventListener
                 return;
             }
 
-            // Skip if Slack is disabled.
-            if (!configuration.isEnabled()) {
+            if (configuration.isEnabled()) {
+                if (configuration.isEventEnabled(event)) {
+                    String message =
+                        String.format("%s was %s by %s%s", getNotificationDocument(event, document, xcontext),
+                            getNotificationAction(event), getNotificationAuthor(event, document, xcontext),
+                            slack.encode(getNotificationComment(document)));
+                    String webhookURL = configuration.getWebhookUrl();
+                    try {
+                        slack.postMessage(message, webhookURL);
+                    } catch (IOException e) {
+                        logger.warn("Faild to post message to Slack.", e);
+                    }
+                }
+
+            } else {
                 if (logger.isDebugEnabled()) {
                     logger.debug(
                         "Skipping notification sending for event [{}] by user [{}] on document [{}]. Slack disabled.",
                         event.getClass().getName(), xcontext.getUserReference(), document.getDocumentReference());
-                }
-                return;
-            }
-            if (this.configuration.isEnabled()) {
-                String message = String.format("%s was %s by %s%s", getNotificationDocument(event, document, xcontext),
-                    getNotificationAction(event), getNotificationAuthor(event, document, xcontext),
-                    this.slack.encode(getNotificationComment(document)));
-                String webhookURL = this.configuration.getWebhookUrl();
-                try {
-                    this.slack.postMessage(message, webhookURL);
-                } catch (IOException e) {
-                    this.logger.warn("Faild to post message to Slack.", e);
                 }
             }
         }
@@ -129,7 +130,7 @@ public class DocumentListener extends AbstractEventListener
         String url = getNotificationURL(event, document, xcontext);
         if (url != null) {
             String title = document.getRenderedTitle(Syntax.PLAIN_1_0, xcontext);
-            return String.format(FORMAT_LINK, url, this.slack.encode(title));
+            return String.format(FORMAT_LINK, url, slack.encode(title));
         } else {
             return document.getDocumentReference().toString();
         }
@@ -160,12 +161,12 @@ public class DocumentListener extends AbstractEventListener
                 try {
                     user = String.format(FORMAT_LINK,
                         xcontext.getWiki().getExternalURL(userReference.toString(), ACTION_VIEW, xcontext),
-                        this.slack.encode(xcontext.getWiki().getPlainUserName(userReference, xcontext)));
+                        slack.encode(xcontext.getWiki().getPlainUserName(userReference, xcontext)));
                 } catch (XWikiException e) {
-                    user = this.slack.encode(userReference.toString());
+                    user = slack.encode(userReference.toString());
                 }
             } else {
-                user = this.slack.encode(userReference.toString());
+                user = slack.encode(userReference.toString());
             }
         } else {
             user = "Guest";
@@ -236,8 +237,8 @@ public class DocumentListener extends AbstractEventListener
             }
         } catch (Exception e) {
             // Ensures that an error in computing the URL won't prevent sending a message on the IRC channel
-            this.logger.warn("Failed to compute URL for document [{}] and query string [{}]",
-                source.getDocumentReference(), queryString, e);
+            logger.warn("Failed to compute URL for document [{}] and query string [{}]", source.getDocumentReference(),
+                queryString, e);
         }
 
         return url;

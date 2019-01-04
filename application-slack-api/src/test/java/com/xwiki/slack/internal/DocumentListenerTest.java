@@ -23,7 +23,6 @@ package com.xwiki.slack.internal;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-//import org.junit.Test;
 import org.slf4j.Logger;
 import org.xwiki.bridge.event.DocumentUpdatingEvent;
 import org.xwiki.component.manager.ComponentLookupException;

@@ -45,15 +45,15 @@ public class SlackConfigurationSource extends AbstractDocumentConfigurationSourc
     private static final List<String> SPACE_NAMES = Arrays.asList("Slack", "Code");
 
     private static final LocalDocumentReference CLASS_REFERENCE =
-        new LocalDocumentReference(SPACE_NAMES, "ConfigurationClass");
+        new LocalDocumentReference(SPACE_NAMES, "SlackConfigurationClass");
 
     private static final LocalDocumentReference DOC_REFERENCE =
-        new LocalDocumentReference(SPACE_NAMES, "Configuration");
+        new LocalDocumentReference(SPACE_NAMES, "SlackConfiguration");
 
     @Override
     protected DocumentReference getDocumentReference()
     {
-        return new DocumentReference(DOC_REFERENCE, new WikiReference(this.wikiManager.getMainWikiId()));
+        return new DocumentReference(DOC_REFERENCE, new WikiReference(wikiManager.getMainWikiId()));
     }
 
     @Override

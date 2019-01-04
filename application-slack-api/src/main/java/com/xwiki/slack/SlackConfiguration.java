@@ -22,10 +22,11 @@ package com.xwiki.slack;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
-
+import org.xwiki.bridge.event.DocumentCreatedEvent;
+import org.xwiki.bridge.event.DocumentDeletedEvent;
 import org.xwiki.component.annotation.Component;
 import org.xwiki.configuration.ConfigurationSource;
-import com.xpn.xwiki.XWikiException;
+import org.xwiki.observation.event.Event;
 
 /**
  * The component used to access the Slack configuration.
@@ -44,7 +45,6 @@ public class SlackConfiguration
      * Check if Slack is enabled in XWiki.
      * 
      * @return true if Slack is enabled, false otherwise
-     * @throws XWikiException whenever an exception occurs
      */
     public boolean isEnabled()
     {
@@ -55,10 +55,28 @@ public class SlackConfiguration
      * Retrieve the Webhook URL of the Slack channel.
      * 
      * @return the Webhook URL of the Slack channel
-     * @throws XWikiException whenever an exception occurs
      */
     public String getWebhookUrl()
     {
         return configuration.getProperty("webhookUrl");
+    }
+
+    /**
+     * Check if the current event type is enabled in XWiki.
+     * 
+     * @param event the listened event
+     * @return true if the current event type is enabled, false otherwise
+     */
+    public boolean isEventEnabled(Event event)
+    {
+        boolean isEventEnabled;
+        if (event instanceof DocumentCreatedEvent) {
+            isEventEnabled = configuration.getProperty("documentCreated", 1) == 1;
+        } else if (event instanceof DocumentDeletedEvent) {
+            isEventEnabled = configuration.getProperty("documentDeleted", 1) == 1;
+        } else {
+            isEventEnabled = configuration.getProperty("documentUpdated", 1) == 1;
+        }
+        return isEventEnabled;
     }
 }
