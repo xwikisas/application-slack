@@ -46,6 +46,30 @@
 #set ($mainPageReference = $services.model.createDocumentReference('', ['Slack', 'Code'], 'SlackConfigurationClass'))
 #if (!$services.licensing.licensor.hasLicensureForEntity($mainPageReference))
   {{error}}#getMissingLicenseMessage('slack.extension.name'){{/error}}
+#else
+  #set ($discard = $xwiki.jsx.use('Slack.Code.SlackConfiguration'))
+  $services.localization.render('admin.slack.webhooks.hint')
+  ## Use a fake document to display the configuration form.
+  #set ($fakeDoc = $xwiki.getDocument('Slack.Code.FakeDocument'))
+  #set ($fakeObj = $fakeDoc.newObject('Slack.Code.SlackConfigurationClass'))
+  {{html clean="false"}}
+    &lt;form id="addWebhookForm" class="xform hidden" action="$xwiki.getURL('Slack.Code.Actions', 'get', 'outputSyntax=plain')" method="post"&gt;
+      &lt;fieldset class="header"&gt;
+        #set ($class = $xwiki.getClass('Slack.Code.SlackConfigurationClass'))
+        &lt;dl&gt;
+          #foreach ($prop in $class.properties)
+            &lt;dt&gt;$prop.prettyName&lt;dt&gt;
+            &lt;dd&gt;{{/html}} $fakeDoc.display($prop.name, 'edit') {{html clean="false"}}&lt;/dd&gt;
+          #end
+        &lt;/dl&gt;
+        &lt;input type="hidden" name="form_token" value="$!escapetool.xml($services.csrf.token)"/&gt;
+        &lt;input type="hidden" name="configAction" value="add"/&gt;
+        &lt;input class="btn btn-primary" type="submit" value="$services.localization.render('admin.slack.webhook.add')"&gt;
+      &lt;/fieldset&gt;
+    &lt;/form&gt;
+    &lt;button id="addWebhookButton" class="btn btn-primary"&gt;$services.localization.render('admin.slack.webhook.add')&lt;/button&gt;
+  {{/html}}
+
 #end
 
 #if ($doc.fullName == 'Slack.Code.SlackConfiguration')
@@ -54,122 +78,6 @@
 #end
 {{/velocity}}
 </content>
-  <object>
-    <name>Slack.Code.SlackConfiguration</name>
-    <number>0</number>
-    <className>Slack.Code.SlackConfigurationClass</className>
-    <guid>3e2e66e1-0b84-4a2d-b76c-0577123cd738</guid>
-    <class>
-      <name>Slack.Code.SlackConfigurationClass</name>
-      <customClass/>
-      <customMapping/>
-      <defaultViewSheet/>
-      <defaultEditSheet/>
-      <defaultWeb/>
-      <nameField/>
-      <validationScript/>
-      <channel>
-        <customDisplay/>
-        <disabled>0</disabled>
-        <name>channel</name>
-        <number>2</number>
-        <picker>0</picker>
-        <prettyName>Channel</prettyName>
-        <size>30</size>
-        <unmodifiable>0</unmodifiable>
-        <validationMessage/>
-        <validationRegExp/>
-        <classType>com.xpn.xwiki.objects.classes.StringClass</classType>
-      </channel>
-      <documentCreated>
-        <customDisplay/>
-        <defaultValue>1</defaultValue>
-        <disabled>0</disabled>
-        <displayFormType>checkbox</displayFormType>
-        <displayType/>
-        <name>documentCreated</name>
-        <number>4</number>
-        <prettyName>Document created events</prettyName>
-        <unmodifiable>0</unmodifiable>
-        <validationMessage/>
-        <validationRegExp/>
-        <classType>com.xpn.xwiki.objects.classes.BooleanClass</classType>
-      </documentCreated>
-      <documentDeleted>
-        <customDisplay/>
-        <defaultValue>1</defaultValue>
-        <disabled>0</disabled>
-        <displayFormType>checkbox</displayFormType>
-        <displayType/>
-        <name>documentDeleted</name>
-        <number>5</number>
-        <prettyName>Document deleted events</prettyName>
-        <unmodifiable>0</unmodifiable>
-        <validationMessage/>
-        <validationRegExp/>
-        <classType>com.xpn.xwiki.objects.classes.BooleanClass</classType>
-      </documentDeleted>
-      <documentUpdated>
-        <customDisplay/>
-        <defaultValue>1</defaultValue>
-        <disabled>0</disabled>
-        <displayFormType>checkbox</displayFormType>
-        <displayType/>
-        <name>documentUpdated</name>
-        <number>6</number>
-        <prettyName>Document updated events</prettyName>
-        <unmodifiable>0</unmodifiable>
-        <validationMessage/>
-        <validationRegExp/>
-        <classType>com.xpn.xwiki.objects.classes.BooleanClass</classType>
-      </documentUpdated>
-      <enabled>
-        <customDisplay/>
-        <defaultValue>1</defaultValue>
-        <disabled>0</disabled>
-        <displayFormType>select</displayFormType>
-        <displayType/>
-        <name>enabled</name>
-        <number>3</number>
-        <prettyName>Enabled</prettyName>
-        <unmodifiable>0</unmodifiable>
-        <validationMessage/>
-        <validationRegExp/>
-        <classType>com.xpn.xwiki.objects.classes.BooleanClass</classType>
-      </enabled>
-      <webhookUrl>
-        <customDisplay/>
-        <disabled>0</disabled>
-        <name>webhookUrl</name>
-        <number>1</number>
-        <picker>0</picker>
-        <prettyName>Webhook URL</prettyName>
-        <size>30</size>
-        <unmodifiable>0</unmodifiable>
-        <validationMessage/>
-        <validationRegExp/>
-        <classType>com.xpn.xwiki.objects.classes.StringClass</classType>
-      </webhookUrl>
-    </class>
-    <property>
-      <channel/>
-    </property>
-    <property>
-      <documentCreated>1</documentCreated>
-    </property>
-    <property>
-      <documentDeleted>1</documentDeleted>
-    </property>
-    <property>
-      <documentUpdated>1</documentUpdated>
-    </property>
-    <property>
-      <enabled>1</enabled>
-    </property>
-    <property>
-      <webhookUrl/>
-    </property>
-  </object>
   <object>
     <name>Slack.Code.SlackConfiguration</name>
     <number>0</number>
@@ -356,16 +264,10 @@
       <categoryIcon/>
     </property>
     <property>
-      <codeToExecute>{{include reference="Slack.Code.SlackConfiguration"/}}
-
-## This code is used only to clear the configuration form when the license is missing.
-#set ($mainPageReference = $services.model.createDocumentReference('', ['Slack', 'Code'], 'SlackConfigurationClass'))
-#if (!$services.licensing.licensor.hasLicensureForEntity($mainPageReference))
-  #set ($discard = $app.set('configurationClass', ''))
-#end</codeToExecute>
+      <codeToExecute>{{include reference="Slack.Code.SlackConfiguration"/}}</codeToExecute>
     </property>
     <property>
-      <configurationClass>Slack.Code.SlackConfigurationClass</configurationClass>
+      <configurationClass/>
     </property>
     <property>
       <configureGlobally>1</configureGlobally>
@@ -393,6 +295,121 @@
     </property>
     <property>
       <sectionOrder/>
+    </property>
+  </object>
+  <object>
+    <name>Slack.Code.SlackConfiguration</name>
+    <number>0</number>
+    <className>XWiki.JavaScriptExtension</className>
+    <guid>2a329760-e8f1-48fd-b844-0973c5ce99db</guid>
+    <class>
+      <name>XWiki.JavaScriptExtension</name>
+      <customClass/>
+      <customMapping/>
+      <defaultViewSheet/>
+      <defaultEditSheet/>
+      <defaultWeb/>
+      <nameField/>
+      <validationScript/>
+      <cache>
+        <cache>0</cache>
+        <disabled>0</disabled>
+        <displayType>select</displayType>
+        <multiSelect>0</multiSelect>
+        <name>cache</name>
+        <number>5</number>
+        <prettyName>Caching policy</prettyName>
+        <relationalStorage>0</relationalStorage>
+        <separator> </separator>
+        <separators>|, </separators>
+        <size>1</size>
+        <unmodifiable>0</unmodifiable>
+        <values>long|short|default|forbid</values>
+        <classType>com.xpn.xwiki.objects.classes.StaticListClass</classType>
+      </cache>
+      <code>
+        <contenttype>PureText</contenttype>
+        <disabled>0</disabled>
+        <editor>PureText</editor>
+        <name>code</name>
+        <number>2</number>
+        <prettyName>Code</prettyName>
+        <rows>20</rows>
+        <size>50</size>
+        <unmodifiable>0</unmodifiable>
+        <classType>com.xpn.xwiki.objects.classes.TextAreaClass</classType>
+      </code>
+      <name>
+        <disabled>0</disabled>
+        <name>name</name>
+        <number>1</number>
+        <prettyName>Name</prettyName>
+        <size>30</size>
+        <unmodifiable>0</unmodifiable>
+        <classType>com.xpn.xwiki.objects.classes.StringClass</classType>
+      </name>
+      <parse>
+        <disabled>0</disabled>
+        <displayFormType>select</displayFormType>
+        <displayType>yesno</displayType>
+        <name>parse</name>
+        <number>4</number>
+        <prettyName>Parse content</prettyName>
+        <unmodifiable>0</unmodifiable>
+        <classType>com.xpn.xwiki.objects.classes.BooleanClass</classType>
+      </parse>
+      <use>
+        <cache>0</cache>
+        <disabled>0</disabled>
+        <displayType>select</displayType>
+        <multiSelect>0</multiSelect>
+        <name>use</name>
+        <number>3</number>
+        <prettyName>Use this extension</prettyName>
+        <relationalStorage>0</relationalStorage>
+        <separator> </separator>
+        <separators>|, </separators>
+        <size>1</size>
+        <unmodifiable>0</unmodifiable>
+        <values>currentPage|onDemand|always</values>
+        <classType>com.xpn.xwiki.objects.classes.StaticListClass</classType>
+      </use>
+    </class>
+    <property>
+      <cache>long</cache>
+    </property>
+    <property>
+      <code>require(['jquery'], function($) {
+  var webHookButton = $('#addWebhookButton');
+  var webHookForm = $('#addWebhookForm');
+  // Hide the button, display the form.
+  webHookButton.click(function() {
+    $(this).toggleClass('hidden');
+    webHookForm.toggleClass('hidden');
+  });
+  // Submit and hide the form, display the button.
+  webHookForm.submit(function(event) {
+    event.preventDefault();
+    $.post({
+      url : $(this).attr('action'),
+      data: $(this).serialize(),
+      success: function(data) {
+        location.reload();
+      }
+    });
+    $(this).toggleClass('hidden');
+    webHookButton.toggleClass('hidden');
+  });
+});</code>
+    </property>
+    <property>
+      <name/>
+    </property>
+    <property>
+      <parse/>
+    </property>
+    <property>
+      <use>currentPage</use>
     </property>
   </object>
 </xwikidoc>

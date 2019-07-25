@@ -68,48 +68,6 @@
       <validationRegExp/>
       <classType>com.xpn.xwiki.objects.classes.StringClass</classType>
     </channel>
-    <documentCreated>
-      <customDisplay/>
-      <defaultValue>1</defaultValue>
-      <disabled>0</disabled>
-      <displayFormType>checkbox</displayFormType>
-      <displayType/>
-      <name>documentCreated</name>
-      <number>4</number>
-      <prettyName>Document created events</prettyName>
-      <unmodifiable>0</unmodifiable>
-      <validationMessage/>
-      <validationRegExp/>
-      <classType>com.xpn.xwiki.objects.classes.BooleanClass</classType>
-    </documentCreated>
-    <documentDeleted>
-      <customDisplay/>
-      <defaultValue>1</defaultValue>
-      <disabled>0</disabled>
-      <displayFormType>checkbox</displayFormType>
-      <displayType/>
-      <name>documentDeleted</name>
-      <number>5</number>
-      <prettyName>Document deleted events</prettyName>
-      <unmodifiable>0</unmodifiable>
-      <validationMessage/>
-      <validationRegExp/>
-      <classType>com.xpn.xwiki.objects.classes.BooleanClass</classType>
-    </documentDeleted>
-    <documentUpdated>
-      <customDisplay/>
-      <defaultValue>1</defaultValue>
-      <disabled>0</disabled>
-      <displayFormType>checkbox</displayFormType>
-      <displayType/>
-      <name>documentUpdated</name>
-      <number>6</number>
-      <prettyName>Document updated events</prettyName>
-      <unmodifiable>0</unmodifiable>
-      <validationMessage/>
-      <validationRegExp/>
-      <classType>com.xpn.xwiki.objects.classes.BooleanClass</classType>
-    </documentUpdated>
     <enabled>
       <customDisplay/>
       <defaultValue>1</defaultValue>
@@ -124,6 +82,27 @@
       <validationRegExp/>
       <classType>com.xpn.xwiki.objects.classes.BooleanClass</classType>
     </enabled>
+    <events>
+      <cache>0</cache>
+      <customDisplay/>
+      <disabled>0</disabled>
+      <displayType>checkbox</displayType>
+      <multiSelect>1</multiSelect>
+      <name>events</name>
+      <number>4</number>
+      <picker>0</picker>
+      <prettyName>Events</prettyName>
+      <relationalStorage>0</relationalStorage>
+      <separator> </separator>
+      <separators>|, </separators>
+      <size>1</size>
+      <sort>none</sort>
+      <unmodifiable>0</unmodifiable>
+      <validationMessage/>
+      <validationRegExp/>
+      <values>documentCreated|documentDeleted|documentUpdated</values>
+      <classType>com.xpn.xwiki.objects.classes.StaticListClass</classType>
+    </events>
     <webhookUrl>
       <customDisplay/>
       <disabled>0</disabled>
