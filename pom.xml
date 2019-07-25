@@ -34,7 +34,7 @@
   <version>1.0-SNAPSHOT</version>
   <description>Integrates XWiki with Slack.</description>
    <properties>
-    <licensing.version>1.13.1</licensing.version>
+    <licensing.version>1.13.9</licensing.version>
   </properties>
   <issueManagement>
     <system>GitHub</system>
