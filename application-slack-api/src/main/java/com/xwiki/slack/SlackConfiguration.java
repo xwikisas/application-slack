@@ -58,7 +58,7 @@ public class SlackConfiguration
      */
     public String getWebhookUrl()
     {
-        return configuration.getProperty("webhookUrl");
+        return configuration.getProperty("channelUrl");
     }
 
     /**
