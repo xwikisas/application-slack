@@ -69,9 +69,23 @@
     &lt;/form&gt;
     &lt;button id="addWebhookButton" class="btn btn-primary"&gt;$services.localization.render('admin.slack.webhook.add')&lt;/button&gt;
   {{/html}}
-
+  #set ($results = $services.query.xwql('from doc.object(Slack.Code.SlackConfigurationClass) config').execute())
+  ## Display the livetable only if there are results.
+  #if ($results.size() &gt; 0)
+    #set ($columns = ['doc.space', 'enabled', 'channelName', 'events'])
+    #set ($columnsProperties = {
+       'doc.space': {'type' : 'text'},
+       'channelName': {'type' : 'text'},
+       'events': {'type' : 'text'},
+       'enabled': {'type' : 'text'}
+    })
+    #set ($options = {
+      'className': 'Slack.Code.SlackConfigurationClass',
+      'translationPrefix': 'slack.'
+    })
+    #livetable('webhooks' $columns $columnsProperties $options)
+  #end
 #end
-
 #if ($doc.fullName == 'Slack.Code.SlackConfiguration')
   ## Just redirect to the administration UI.
   $response.sendRedirect($xwiki.getURL('XWiki.XWikiPreferences', 'admin', 'editor=globaladmin&amp;section=slack'))

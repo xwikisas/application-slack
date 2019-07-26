@@ -43,9 +43,14 @@
 admin.slack.webhook.add=Add webhook
 admin.slack.webhooks.hint=Configure some webhooks in order to decide what information should XWiki push to Slack.
 slack.extension.name=Slack Application
-Slack.Code.SlackConfigurationClass_events_documentCreated=Document created
-Slack.Code.SlackConfigurationClass_events_documentDeleted=Document deleted
-Slack.Code.SlackConfigurationClass_events_documentUpdated=Document updated</content>
+slack.doc.space=Location
+slack.enabled=Enabled
+slack.channelName=Channel name
+slack.events=Events
+slack.emptyvalue=
+Slack.Code.SlackConfigurationClass_events_documentCreated=DOCUMENT_CREATED
+Slack.Code.SlackConfigurationClass_events_documentDeleted=DOCUMENT_DELETED
+Slack.Code.SlackConfigurationClass_events_documentUpdated=DOCUMENT_UPDATED</content>
   <object>
     <name>Slack.Code.Translations</name>
     <number>0</number>
