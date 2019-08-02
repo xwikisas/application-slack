@@ -25,6 +25,7 @@ import java.util.Arrays;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.inject.Provider;
 import javax.inject.Singleton;
 
 import org.apache.commons.lang3.StringUtils;
@@ -65,7 +66,7 @@ public class DocumentListener extends AbstractEventListener
     private static final String FORMAT_LINK = "<%s|%s>";
 
     @Inject
-    private Licensor licensor;
+    private Provider<Licensor> licensorProvider;
 
     @Inject
     private Logger logger;
@@ -74,7 +75,7 @@ public class DocumentListener extends AbstractEventListener
     private SlackClient slack;
 
     @Inject
-    private SlackConfiguration configuration;
+    private Provider<SlackConfiguration> slackConfigurationProvider;
 
     /**
      * Default constructor.
@@ -94,20 +95,21 @@ public class DocumentListener extends AbstractEventListener
             // Skip if there is no valid license has expired.
             DocumentReference mainPageReference = new DocumentReference(xcontext.getMainXWiki(),
                 Arrays.asList("Slack", "Code"), "SlackConfigurationClass");
-            if (!licensor.hasLicensure(mainPageReference)) {
+            if (!licensorProvider.get().hasLicensure(mainPageReference)) {
                 logger.warn("Skipping notification sending for event [{}] by user [{}] on document [{}]. "
                     + "No valid Slack license has been found. Please visit the 'Licenses' section in Administration.",
                     event.getClass().getName(), xcontext.getUserReference(), document.getDocumentReference());
                 return;
             }
 
-            if (configuration.isEnabled()) {
-                if (configuration.isEventEnabled(event)) {
+            SlackConfiguration slackConfiguration = slackConfigurationProvider.get();
+            if (slackConfiguration.isEnabled()) {
+                if (slackConfiguration.isEventEnabled(event)) {
                     String message =
                         String.format("%s was %s by %s%s", getNotificationDocument(event, document, xcontext),
                             getNotificationAction(event), getNotificationAuthor(event, document, xcontext),
                             slack.encode(getNotificationComment(document)));
-                    String webhookURL = configuration.getWebhookUrl();
+                    String webhookURL = slackConfiguration.getWebhookUrl();
                     try {
                         slack.postMessage(message, webhookURL);
                     } catch (IOException e) {
