@@ -88,40 +88,34 @@ public class DocumentListener extends AbstractEventListener
     @Override
     public void onEvent(Event event, Object source, Object data)
     {
-        if (source instanceof XWikiDocument && data instanceof XWikiContext) {
-            XWikiDocument document = (XWikiDocument) source;
-            XWikiContext xcontext = (XWikiContext) data;
+        XWikiDocument document = (XWikiDocument) source;
+        XWikiContext xcontext = (XWikiContext) data;
 
-            // Skip if there is no valid license has expired.
-            DocumentReference mainPageReference = new DocumentReference(xcontext.getMainXWiki(),
-                Arrays.asList("Slack", "Code"), "SlackConfigurationClass");
-            if (!licensorProvider.get().hasLicensure(mainPageReference)) {
-                logger.warn("Skipping notification sending for event [{}] by user [{}] on document [{}]. "
-                    + "No valid Slack license has been found. Please visit the 'Licenses' section in Administration.",
-                    event.getClass().getName(), xcontext.getUserReference(), document.getDocumentReference());
-                return;
+        // Skip if there is no valid license has expired.
+        DocumentReference mainPageReference =
+            new DocumentReference(xcontext.getMainXWiki(), Arrays.asList("Slack", "Code"), "SlackConfigurationClass");
+        if (!licensorProvider.get().hasLicensure(mainPageReference)) {
+            return;
+        }
+
+        SlackConfiguration slackConfiguration = slackConfigurationProvider.get();
+        if (slackConfiguration.isEnabled()) {
+            if (slackConfiguration.isEventEnabled(event)) {
+                String message = String.format("%s was %s by %s%s", getNotificationDocument(event, document, xcontext),
+                    getNotificationAction(event), getNotificationAuthor(event, document, xcontext),
+                    slack.encode(getNotificationComment(document)));
+                String webhookURL = slackConfiguration.getWebhookUrl();
+                try {
+                    slack.postMessage(message, webhookURL);
+                } catch (IOException e) {
+                    logger.warn("Faild to post message to Slack.", e);
+                }
             }
-
-            SlackConfiguration slackConfiguration = slackConfigurationProvider.get();
-            if (slackConfiguration.isEnabled()) {
-                if (slackConfiguration.isEventEnabled(event)) {
-                    String message =
-                        String.format("%s was %s by %s%s", getNotificationDocument(event, document, xcontext),
-                            getNotificationAction(event), getNotificationAuthor(event, document, xcontext),
-                            slack.encode(getNotificationComment(document)));
-                    String webhookURL = slackConfiguration.getWebhookUrl();
-                    try {
-                        slack.postMessage(message, webhookURL);
-                    } catch (IOException e) {
-                        logger.warn("Faild to post message to Slack.", e);
-                    }
-                }
-            } else {
-                if (logger.isDebugEnabled()) {
-                    logger.debug(
-                        "Skipping notification sending for event [{}] by user [{}] on document [{}]. Slack disabled.",
-                        event.getClass().getName(), xcontext.getUserReference(), document.getDocumentReference());
-                }
+        } else {
+            if (logger.isDebugEnabled()) {
+                logger.debug(
+                    "Skipping notification sending for event [{}] by user [{}] on document [{}]. Slack disabled.",
+                    event.getClass().getName(), xcontext.getUserReference(), document.getDocumentReference());
             }
         }
     }
