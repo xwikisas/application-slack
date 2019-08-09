@@ -99,6 +99,12 @@ public class DocumentListener extends AbstractEventListener
         }
 
         SlackConfiguration slackConfiguration = slackConfigurationProvider.get();
+
+        // Skip if there is no configuration source detected.
+        if (!slackConfiguration.hasConfigurationSource()) {
+            return;
+        }
+
         if (slackConfiguration.isEnabled()) {
             if (slackConfiguration.isEventEnabled(event)) {
                 String message = String.format("%s was %s by %s%s", getNotificationDocument(event, document, xcontext),

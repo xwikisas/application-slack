@@ -79,4 +79,14 @@ public class SlackConfiguration
         }
         return isEventEnabled;
     }
+
+    /**
+     * Check if the configuration source is not empty.
+     * If a key is detected, a page with an object of configuration type exists.
+     *
+     * @return true if there if a key is identified, false otherwise
+     */
+    public boolean hasConfigurationSource() {
+        return configuration.isEmpty() ? false : true;
+    }
 }
