@@ -116,6 +116,30 @@
       <values>documentCreated|documentDeleted|documentUpdated</values>
       <classType>com.xpn.xwiki.objects.classes.StaticListClass</classType>
     </events>
+    <location>
+      <cache>0</cache>
+      <classname/>
+      <customDisplay/>
+      <disabled>0</disabled>
+      <displayType>input</displayType>
+      <idField/>
+      <multiSelect>0</multiSelect>
+      <name>location</name>
+      <number>5</number>
+      <picker>1</picker>
+      <prettyName>Location</prettyName>
+      <relationalStorage>0</relationalStorage>
+      <separator> </separator>
+      <separators/>
+      <size>1</size>
+      <sort>none</sort>
+      <sql>select distinct doc.web from XWikiDocument doc</sql>
+      <unmodifiable>0</unmodifiable>
+      <validationMessage/>
+      <validationRegExp/>
+      <valueField/>
+      <classType>com.xpn.xwiki.objects.classes.PageClass</classType>
+    </location>
   </class>
   <object>
     <name>Slack.Code.SlackConfigurationClass</name>

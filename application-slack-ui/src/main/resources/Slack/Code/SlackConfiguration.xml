@@ -86,7 +86,7 @@
     #livetable('webhooks' $columns $columnsProperties $options)
   #end
 #end
-#if ($doc.fullName == 'Slack.Code.SlackConfiguration')
+#if ($doc.fullName != 'XWiki.XWikiPreferences')
   ## Just redirect to the administration UI.
   $response.sendRedirect($xwiki.getURL('XWiki.XWikiPreferences', 'admin', 'editor=globaladmin&amp;section=slack'))
 #end
@@ -407,7 +407,7 @@
     $.post({
       url : $(this).attr('action'),
       data: $(this).serialize(),
-      success: function(data) {
+      success: function() {
         location.reload();
       }
     });

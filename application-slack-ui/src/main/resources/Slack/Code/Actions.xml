@@ -41,10 +41,11 @@
   <hidden>true</hidden>
   <content>{{velocity}}
 #if ($request.configAction == 'add' &amp;&amp; $request.form_token == $services.csrf.token)
-  #set ($configurationDoc = $xwiki.getDocument('Slack.WebPreferences'))
-  #set ($discard = $configurationDoc.updateObjectFromRequest('Slack.Code.SlackConfigurationClass'))
-  #set ($discard = $configurationDoc.saveWithProgrammingRights())
+  #set ($configSpaceRef = $services.model.resolveSpace($request.get('Slack.Code.SlackConfigurationClass_0_location')))
+  #set ($configDocRef = $services.model.createDocumentReference('WebPreferences', $configSpaceRef))
+  #set ($configDoc = $xwiki.getDocument($configDocRef))
+  #set ($discard = $configDoc.updateObjectFromRequest('Slack.Code.SlackConfigurationClass'))
+  #set ($discard = $configDoc.save())
 #end
-{{/velocity}}
-</content>
+{{/velocity}}</content>
 </xwikidoc>

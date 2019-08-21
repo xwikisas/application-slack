@@ -27,9 +27,13 @@ import javax.inject.Singleton;
 
 import org.xwiki.component.annotation.Component;
 import org.xwiki.configuration.internal.AbstractDocumentConfigurationSource;
+import org.xwiki.model.EntityType;
 import org.xwiki.model.reference.DocumentReference;
 import org.xwiki.model.reference.LocalDocumentReference;
-import org.xwiki.model.reference.WikiReference;
+import org.xwiki.model.reference.SpaceReference;
+import com.xpn.xwiki.XWikiContext;
+import com.xpn.xwiki.XWikiException;
+import com.xpn.xwiki.doc.XWikiDocument;
 
 /**
  * {@link org.xwiki.configuration.ConfigurationSource} reading the values from the configuration page on the main wiki.
@@ -47,13 +51,31 @@ public class SlackConfigurationSource extends AbstractDocumentConfigurationSourc
     private static final LocalDocumentReference CLASS_REFERENCE =
         new LocalDocumentReference(SPACE_NAMES, "SlackConfigurationClass");
 
-    private static final LocalDocumentReference DOC_REFERENCE =
-        new LocalDocumentReference(SPACE_NAMES, "SlackConfiguration");
-
     @Override
     protected DocumentReference getDocumentReference()
     {
-        return new DocumentReference(DOC_REFERENCE, new WikiReference(wikiManager.getMainWikiId()));
+        XWikiContext xcontext = xcontextProvider.get();
+        XWikiDocument currentDoc = xcontext.getDoc();
+        SpaceReference lastSpaceRef = currentDoc.getDocumentReference().getLastSpaceReference();
+
+        while (lastSpaceRef.getType() == EntityType.SPACE) {
+            DocumentReference localConfigDocRef = new DocumentReference("WebPreferences", lastSpaceRef);
+            try {
+                XWikiDocument localConfigDoc = xcontext.getWiki().getDocument(localConfigDocRef, xcontext);
+                if (localConfigDoc != null && localConfigDoc.getXObject(CLASS_REFERENCE) != null) {
+                    return localConfigDocRef;
+                }
+            } catch (XWikiException e) {
+                logger.error("Failed to retrieve the document for the reference [{}].", localConfigDocRef, e);
+                return null;
+            }
+            if (lastSpaceRef.getParent().getType() == EntityType.SPACE) {
+                lastSpaceRef = new SpaceReference(lastSpaceRef.getParent());
+            }
+            break;
+        }
+
+        return null;
     }
 
     @Override
