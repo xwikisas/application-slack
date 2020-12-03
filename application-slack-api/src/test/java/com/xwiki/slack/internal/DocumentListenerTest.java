@@ -20,12 +20,17 @@
  */
 package com.xwiki.slack.internal;
 
+import java.util.Arrays;
+
+import javax.inject.Provider;
+
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.xwiki.bridge.event.DocumentUpdatingEvent;
 import org.xwiki.component.manager.ComponentLookupException;
+import org.xwiki.component.util.DefaultParameterizedType;
 import org.xwiki.model.reference.DocumentReference;
 import org.xwiki.test.mockito.MockitoComponentMockingRule;
 
@@ -40,8 +45,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.util.Arrays;
-
 /**
  * Tests for {@link DocumentListener}.
  *
@@ -53,7 +56,7 @@ public class DocumentListenerTest
     public final MockitoComponentMockingRule<DocumentListener> mocker =
         new MockitoComponentMockingRule<>(DocumentListener.class);
 
-    private SlackConfiguration configuration;
+    private SlackConfiguration configuration = mock(SlackConfiguration.class);
 
     private DocumentListener listener;
 
@@ -67,15 +70,16 @@ public class DocumentListenerTest
 
     private DocumentReference docReference;
 
-    private XWikiContext context;
+    private XWikiContext context = mock(XWikiContext.class);
 
     private DocumentReference userReference;
 
     @Before
     public void setUp() throws ComponentLookupException
     {
-        configuration = mocker.getInstance(SlackConfiguration.class);
-        context = mock(XWikiContext.class);
+        Provider<SlackConfiguration> slackConfigProvider =
+            mocker.getInstance(new DefaultParameterizedType(null, Provider.class, SlackConfiguration.class));
+        when(slackConfigProvider.get()).thenReturn(this.configuration);
 
         doc = mock(XWikiDocument.class);
         docReference = new DocumentReference("wiki", "Space", "Page");
@@ -101,6 +105,7 @@ public class DocumentListenerTest
     @Test
     public void slackDisabled()
     {
+        when(configuration.hasConfigurationSource()).thenReturn(true);
         when(configuration.isEnabled()).thenReturn(false);
 
         listener.onEvent(event, doc, context);
